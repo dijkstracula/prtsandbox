@@ -8,6 +8,7 @@ import punit.flows.Flow;
 import punit.flows.LocalFlow;
 import sample.sampleimpl.Ring;
 import sample.samplespec.PEvents;
+import sample.samplespec.PTypes;
 import sample.samplespec.RingEventParser;
 import sample.samplespec.RingSpec;
 
@@ -50,7 +51,17 @@ public class RingTest {
         Monitor spec = new RingSpec();
         spec.ready();
 
-        spec.process(new PEvents.mulEvent(42));
+        spec.process(new PEvents.mulEvent(new PTypes.PTuple_i_total(42, 0)));
+    }
+
+    @Test
+    @DisplayName("Test no overflow, manually")
+    public void testSpecOverflow() {
+        Monitor spec = new RingSpec();
+        spec.ready();
+
+        spec.process(new PEvents.addEvent(new PTypes.PTuple_i_total(32, 32)));
+        spec.process(new PEvents.addEvent(new PTypes.PTuple_i_total(10, 42)));
     }
 
     //@Test
@@ -58,6 +69,8 @@ public class RingTest {
     @DisplayName("Can multiply to a Ring specification, by way of driving the implementation")
     public void testSingleRingMul() {
         Ring r = new Ring();
-        r.Mul(42);
+        r.Add(32);
+        r.Add(10);
     }
+
 }

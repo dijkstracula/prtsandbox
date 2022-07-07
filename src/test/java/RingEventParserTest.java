@@ -2,6 +2,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import prt.events.PEvent;
 import sample.samplespec.PEvents;
+import sample.samplespec.PTypes;
 import sample.samplespec.RingEventParser;
 
 import java.util.List;
@@ -14,11 +15,11 @@ public class RingEventParserTest {
     @DisplayName("Can decode a valid add event")
     public void testDecodeAdd() {
         RingEventParser p = new RingEventParser();
-        String line = "ADD:42";
+        String line = "ADD:42,100";
 
         List<PEvent<?>> events = p.apply(line).collect(Collectors.toList());
         assertEquals(1, events.size());
-        assertEquals(new PEvents.addEvent(42), events.get(0));
+        assertEquals(new PEvents.addEvent(new PTypes.PTuple_i_total(42, 100)), events.get(0));
     }
 
 
@@ -26,11 +27,11 @@ public class RingEventParserTest {
     @DisplayName("Can decode a valid mul event")
     public void testDecodeMul() {
         RingEventParser p = new RingEventParser();
-        String line = "MUL:42";
+        String line = "MUL:42,100";
 
         List<PEvent<?>> events = p.apply(line).collect(Collectors.toList());
         assertEquals(1, events.size());
-        assertEquals(new PEvents.mulEvent(42), events.get(0));
+        assertEquals(new PEvents.mulEvent(new PTypes.PTuple_i_total(42, 100)), events.get(0));
     }
 
     @Test

@@ -43,7 +43,9 @@ public class PSpecInterceptor implements InvocationInterceptor {
 
         appender.observe()
                 .subscribeOn(Schedulers.single())
-                .forEach(flow::apply);
+                .subscribe(
+                        flow::apply,
+                        t -> { throw t; } ); // TODO: This is the wrong thing; it throws in another thread.
         appender.start();
 
         // Before executing the test code, add the shim appender to the logger.

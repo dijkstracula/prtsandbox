@@ -15,11 +15,19 @@ public class RingEventParser implements Function<String, Stream<? extends PEvent
     ));
 
     private static PEvents.addEvent payloadToAddEvent(String payload) {
-        return new PEvents.addEvent(Integer.valueOf(payload));
+        String[] tokens = payload.split(",");
+        return new PEvents.addEvent(
+                new PTypes.PTuple_i_total(
+                    Integer.valueOf(tokens[0]),
+                    Integer.valueOf(tokens[1])));
     }
 
     private static PEvents.mulEvent payloadToMulEvent(String payload) {
-        return new PEvents.mulEvent(Integer.valueOf(payload));
+        String[] tokens = payload.split(",");
+        return new PEvents.mulEvent(
+                new PTypes.PTuple_i_total(
+                        Integer.valueOf(tokens[0]),
+                        Integer.valueOf(tokens[1])));
     }
 
 
