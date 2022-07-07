@@ -1,8 +1,8 @@
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import prt.events.PEvent;
-import samplespec.PEvents;
-import samplespec.RingEventParser;
+import sample.samplespec.PEvents;
+import sample.samplespec.RingEventParser;
 
 import java.util.List;
 import java.util.stream.Collectors;

@@ -4,7 +4,7 @@ import java.util.function.Function;
 
 /**
  * A flow represents a way to connect something that produces log lines
- * to a thing that consumes them.
+ * to a thing that effectully-consumes them.
  *
  * TODO: At present, this function never returns anything.  But: this
  * is almost certainly the wrong design.  We need a way of getting information

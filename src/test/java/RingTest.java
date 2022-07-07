@@ -6,9 +6,10 @@ import punit.ObservableAppender;
 import punit.annotations.PSpecTest;
 import punit.flows.Flow;
 import punit.flows.LocalFlow;
-import sampleimpl.Ring;
-import samplespec.RingEventParser;
-import samplespec.RingSpec;
+import sample.sampleimpl.Ring;
+import sample.samplespec.PEvents;
+import sample.samplespec.RingEventParser;
+import sample.samplespec.RingSpec;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -24,7 +25,7 @@ public class RingTest {
         r.Add(42);
     }
 
-    public static class LocalRingSpecFlow implements Supplier<Flow> {
+    public static class RingSpecFlowFactory implements Supplier<Flow> {
         @Override
         public Flow get() {
             // Our dummy experimental pipeline: currently requires:
@@ -43,9 +44,18 @@ public class RingTest {
         }
     }
 
+    @Test
+    @DisplayName("Can multiply to a ring specification, manually")
+    public void testRingSpecMul() {
+        Monitor spec = new RingSpec();
+        spec.ready();
+
+        spec.process(new PEvents.mulEvent(42));
+    }
+
     //@Test
-    @PSpecTest(impl = Ring.class, flowFactory = LocalRingSpecFlow.class)
-    @DisplayName("Can multiply to a Ring")
+    @PSpecTest(impl = Ring.class, specFlowFactory = RingSpecFlowFactory.class)
+    @DisplayName("Can multiply to a Ring specification, by way of driving the implementation")
     public void testSingleRingMul() {
         Ring r = new Ring();
         r.Mul(42);

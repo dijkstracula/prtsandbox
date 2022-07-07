@@ -1,4 +1,4 @@
-package samplespec;
+package sample.samplespec;
 
 import prt.events.PEvent;
 

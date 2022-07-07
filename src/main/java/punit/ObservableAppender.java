@@ -7,12 +7,11 @@ import org.apache.logging.log4j.core.Core;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
-import org.apache.logging.log4j.core.config.plugins.Plugin;
 
-@Plugin(
-        name = "ObservableAppender",
-        category = Core.CATEGORY_NAME,
-        elementType = Appender.ELEMENT_TYPE)
+/**
+ * An ObservableAppender consumes Log4J Log events and published them
+ * for downstream Observers to consume.
+ */
 public class ObservableAppender extends AbstractAppender {
 
     private final PublishSubject<String> downstream;

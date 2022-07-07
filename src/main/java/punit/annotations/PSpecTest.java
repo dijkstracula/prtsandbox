@@ -13,6 +13,13 @@ import java.lang.annotation.Target;
 import java.util.function.Supplier;
 
 
+/**
+ * PSpecTest annotates a test method to indicate that instances of a given class should run under the
+ * observeration of a specification flow, which consumes strings logged by instances of the given class
+ * and passes them downstream to a runtime monitor to observe and alert upon.
+ *
+ * The specifics of setting this up can be found in the PSpecInterceptor class.
+ */
 @Target({ ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Tag("PSpecTest")
@@ -24,5 +31,5 @@ public @interface PSpecTest {
 
     /* How to generate a string -> unit operation that connects the implementation's
      * log lines to the monitor spec. */
-    Class<? extends Supplier<? extends Flow>> flowFactory();
+    Class<? extends Supplier<? extends Flow>> specFlowFactory();
 }

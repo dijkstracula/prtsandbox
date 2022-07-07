@@ -1,4 +1,4 @@
-package sampleimpl;
+package sample.sampleimpl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

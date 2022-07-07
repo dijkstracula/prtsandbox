@@ -2,7 +2,6 @@ package punit;
 
 import io.reactivex.rxjava3.schedulers.Schedulers;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -14,10 +13,12 @@ import punit.flows.Flow;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
+/**
+ * This JUnit test interceptor handles per-test specification setup and teardown. It will construct the Logger shim,
+ * associate the given Flow with it, and insert it into given class's logger's appenders.  After the test runs,
+ * it will undo the insertion.
+ */
 public class PSpecInterceptor implements InvocationInterceptor {
-
-    private Logger logger = LogManager.getLogger(PSpecInterceptor.class);
-
     private Optional<PSpecTest> extractAnnotation(Method m) {
         PSpecTest a = m.getAnnotation(PSpecTest.class);
         return Optional.ofNullable(a);
@@ -38,7 +39,7 @@ public class PSpecInterceptor implements InvocationInterceptor {
         // will synchronously process all log messages and send them through the effectful Flow
         // to the spec.
         ObservableAppender appender = new ObservableAppender(config.getFilter());
-        Flow flow = params.flowFactory().getConstructor().newInstance().get();
+        Flow flow = params.specFlowFactory().getConstructor().newInstance().get();
 
         appender.observe()
                 .subscribeOn(Schedulers.single())

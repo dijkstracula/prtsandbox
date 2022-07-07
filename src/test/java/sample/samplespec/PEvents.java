@@ -1,4 +1,4 @@
-package samplespec;
+package sample.samplespec;
 
 /***************************************************************************
  * This file was auto-generated on Tuesday, 05 July 2022 at 10:06:30.
