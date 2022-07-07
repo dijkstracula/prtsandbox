@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class RingEventParser implements Function<String, Stream<PEvent<?>>> {
+public class RingEventParser implements Function<String, Stream<? extends PEvent<?>>> {
 
     private static final HashMap<String, Function<String, ? extends PEvent<?>>> handlers = new HashMap<>(Map.of(
             "ADD", RingEventParser::payloadToAddEvent,

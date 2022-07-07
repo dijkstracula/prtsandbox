@@ -10,17 +10,17 @@ import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
 
 @Plugin(
-        name = "Log4JEventSubscriber",
+        name = "ObservableAppender",
         category = Core.CATEGORY_NAME,
         elementType = Appender.ELEMENT_TYPE)
-public class Log4JEventSubscriber extends AbstractAppender {
+public class ObservableAppender extends AbstractAppender {
 
     private final PublishSubject<String> downstream;
 
 
-    public Log4JEventSubscriber(Filter filter) {
+    public ObservableAppender(Filter filter) {
         // TODO: Layout?
-        super("Log4JEventSubscriber", filter, null, false, null);
+        super("ObservableAppender", filter, null, false, null);
         this.downstream = PublishSubject.create();
     }
 

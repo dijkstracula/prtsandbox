@@ -23,4 +23,5 @@ public class RingSpec extends prt.Monitor {
     public List<Class<? extends PEvent<?>>> getEventTypes() {
         return List.of(PEvents.addEvent.class, PEvents.mulEvent.class);
     }
+
 }
