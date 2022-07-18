@@ -7,11 +7,15 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.InvocationInterceptor;
 import org.junit.jupiter.api.extension.ReflectiveInvocationContext;
+import prt.exceptions.PAssertionFailureException;
+import punit.annotations.PAssertExpected;
 import punit.annotations.PSpecTest;
+import punit.exceptions.PAssertMismatchExeception;
 import punit.flows.Flow;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * This JUnit test interceptor handles per-test specification setup and teardown. It will construct the Logger shim,
@@ -22,6 +26,13 @@ public class PSpecInterceptor implements InvocationInterceptor {
     private Optional<PSpecTest> extractAnnotation(Method m) {
         PSpecTest a = m.getAnnotation(PSpecTest.class);
         return Optional.ofNullable(a);
+    }
+
+    private Optional<Class<? extends Throwable>> expectedException(Method m) {
+        if (m.getAnnotation(PAssertExpected.class) == null) {
+            return Optional.empty();
+        }
+        return Optional.of(PAssertionFailureException.class);
     }
 
     @Override
@@ -41,18 +52,32 @@ public class PSpecInterceptor implements InvocationInterceptor {
         ObservableAppender appender = new ObservableAppender(config.getFilter());
         Flow flow = params.specFlowFactory().getConstructor().newInstance().get();
 
+        // Stash any thrown exception from the other thread here; throw upon completion.
+        AtomicReference<Throwable> actualException = new AtomicReference<>();
+
         appender.observe()
                 .subscribeOn(Schedulers.single())
                 .subscribe(
                         flow::apply,
-                        t -> { throw t; } ); // TODO: This is the wrong thing; it throws in another thread.
+                        t -> actualException.compareAndSet(null, t));
+
         appender.start();
 
         // Before executing the test code, add the shim appender to the logger.
         var implLogger = (org.apache.logging.log4j.core.Logger) LogManager.getLogger(params.impl());
         implLogger.addAppender(appender);
 
-        invocation.proceed(); // Run the test.
+        // Extract whether we expect this method to throw an exception, run the test,
+        // and compare any exceptions thrown with the one we expect.
+        invocation.proceed();
+
+        Optional<PAssertMismatchExeception> error =
+                PAssertMismatchExeception.fromTestResults(
+                        Optional.ofNullable(actualException.get()),
+                        expectedException(invocationContext.getExecutable()));
+        if (error.isPresent()) {
+            throw error.get();
+        }
 
         // Reset the logger to its previous state by removing our appender.
         implLogger.removeAppender(appender);

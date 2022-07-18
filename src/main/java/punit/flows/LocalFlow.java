@@ -20,7 +20,7 @@ public class LocalFlow extends Flow {
 
     @Override
     public Void apply(String s) {
-        parser.apply(s).forEach(monitor::process);
+        parser.apply(s).forEach(monitor::accept);
         return null;
     }
 

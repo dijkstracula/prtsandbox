@@ -3,6 +3,7 @@ import org.junit.jupiter.api.Test;
 import prt.Monitor;
 import prt.events.PEvent;
 import punit.ObservableAppender;
+import punit.annotations.PAssertExpected;
 import punit.annotations.PSpecTest;
 import punit.flows.Flow;
 import punit.flows.LocalFlow;
@@ -15,6 +16,8 @@ import sample.samplespec.RingSpec;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RingTest {
     ObservableAppender source;
@@ -51,7 +54,7 @@ public class RingTest {
         Monitor spec = new RingSpec();
         spec.ready();
 
-        spec.process(new PEvents.mulEvent(new PTypes.PTuple_i_total(42, 0)));
+        spec.accept(new PEvents.mulEvent(new PTypes.PTuple_i_total(42, 0)));
     }
 
     @Test
@@ -60,8 +63,8 @@ public class RingTest {
         Monitor spec = new RingSpec();
         spec.ready();
 
-        spec.process(new PEvents.addEvent(new PTypes.PTuple_i_total(32, 32)));
-        spec.process(new PEvents.addEvent(new PTypes.PTuple_i_total(10, 42)));
+        spec.accept(new PEvents.addEvent(new PTypes.PTuple_i_total(32, 32)));
+        spec.accept(new PEvents.addEvent(new PTypes.PTuple_i_total(10, 42)));
     }
 
     //@Test
@@ -73,4 +76,13 @@ public class RingTest {
         r.Add(10);
     }
 
+    //@Test
+    @PSpecTest(impl = Ring.class, specFlowFactory = RingSpecFlowFactory.class)
+    @PAssertExpected
+    @DisplayName("Can cause a P assertion violation")
+    public void testRingOverflow() {
+        Ring r = new Ring();
+        r.Add(32);
+        r.Mul(10);
+    }
 }
